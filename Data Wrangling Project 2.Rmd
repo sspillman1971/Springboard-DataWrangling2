@@ -1,0 +1,65 @@
+---
+title: "Data Wrangling Project 2"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## GitHub Documents
+
+This is an R Markdown format used for publishing markdown documents to GitHub. When you click the **Knit** button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated.
+
+## Including Code
+
+You can include R code in the document as follows:
+
+```
+library(readr)
+library(dplyr)
+library(tidyr)
+
+# Read the CSV file into a dataframe
+
+titanic_original <- read.csv("~/RProjects/titanic_original.csv")
+
+# Create a new dataframe for cleaning
+
+titanic_clean <- titanic_original
+
+# Find missing values in the embarked column and replace them with S
+
+titanic_clean$embarked[is.na(titanic_clean$embarked)] <- "S"
+
+# Enter the mean of the ages in the age column for missing values in that column
+
+mean_age <- mean(titanic_clean$age, na.rm = TRUE)
+titanic_clean$age[is.na(titanic_clean$age)] <- mean_age
+
+# Fill missing values in the boat column with None
+
+titanic_clean$boat[titanic_clean$boat==""]<-NA
+titanic_clean$boat <- as.character(titanic_clean$boat)
+titanic_clean$boat[is.na(titanic_clean$boat)] <- "None"
+
+# Add a column with a binary indicator of whether or not there is a cabin number.
+
+titanic_clean$cabin[titanic_clean$cabin==""]<-NA
+titanic_clean$cabin <- as.character(titanic_clean$cabin)
+  
+titanic_clean <- titanic_clean %>% 
+  mutate(has_cabin_number = ifelse(is.na(cabin),0,1))
+
+write.csv(titanic_clean, file = "titanic_clean.csv")
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
